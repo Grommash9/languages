@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vietnamese Vocabulary Exercise</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+        .translation {
+            /* Initially hidden */
+            display: none; 
+            color: #3b82f6;
+            font-style: italic;
+            margin-left: 0.5rem;
+        }
+        .card {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+    <div class="max-w-4xl mx-auto">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold text-blue-800 mb-2">Vietnamese Vocab Builder</h1>
+            <p class="text-xl text-gray-600">Click **Show Translation** to reveal the meaning!</p>
+        </header>
+
+        <!-- Vocabulary & Phrases Section -->
+        <div class="card bg-white p-6 rounded-xl mb-10">
+            <h2 class="text-2xl font-bold text-gray-800 border-b pb-3 mb-4">Core Vocabulary & Phrases</h2>
+            <div id="vocabulary-list" class="space-y-4">
+                <!-- Vocabulary items will be inserted here by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Numbers Section -->
+        <div class="card bg-white p-6 rounded-xl mb-10">
+            <h2 class="text-2xl font-bold text-gray-800 border-b pb-3 mb-4">High Numbers & Currency (Số lớn & Tiền tệ)</h2>
+            <div id="numbers-list" class="grid grid-cols-2 sm:grid-cols-3 gap-y-4">
+                <!-- Number items will be inserted here by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Conversation Example Section -->
+        <div class="card bg-white p-6 rounded-xl">
+            <h2 class="text-2xl font-bold text-gray-800 border-b pb-3 mb-4">Conversation Examples (Ví dụ hội thoại)</h2>
+            <div id="conversation-list" class="space-y-3">
+                <!-- Conversation will be inserted here by JavaScript -->
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Data Extracted from Lessons ---
+
+        const vocabularyData = [
+            // Basic Greetings & Politeness
+            ["Xin chào", "Hello"],
+            ["Cảm ơn", "Thank you"],
+            ["cảm ơn rất nhiều", "Thank you very much"],
+            ["Không có gì", "You're welcome"],
+            ["Đúng rồi", "That's right"],
+            ["chờ chút", "Wait a moment"],
+            
+            // Essential Requests & Questions
+            ["Làm ơn tính tiền", "Can I have the bill, please?"],
+            ["Bao nhiêu tiền?", "How much is it?"],
+            ["Cho tôi đi đến...", "Please take me to..."],
+            ["Cho tôi đi đến địa chỉ này", "Please take me to this address"],
+
+            // Food & Drink Items
+            ["cho tÔi một bát phở KHÔNG HÀNH", "Give me a bowl of pho without onion/scallions"],
+            ["Phở", "Noodle soup (General)"],
+            ["Bún bò", "Spicy beef noodle soup (Bún bò Huế)"],
+            ["Cơm tấm", "Broken rice"],
+            ["Bánh xèo", "Savory pancake"],
+            ["Bánh mì", "Vietnamese sandwich"],
+            ["Cà phê", "Coffee"],
+            ["cà phê sữa đá", "Iced milk coffee"],
+            ["trà đá", "Iced tea"],
+            ["Bia", "Beer"],
+            ["Nước suối", "Bottled water"],
+            ["nước mía", "Sugarcane juice"],
+            
+            // Places & General Words
+            ["Dinh Độc Lập", "Reunification Palace"],
+            ["chợ Bến Thành", "Bến Thành market"],
+            ["Áo dài", "Traditional Vietnamese dress"],
+            ["Hoa sen", "Lotus flower"],
+            ["ăn", "to eat"],
+            ["đi", "to go"],
+            ["em", "younger sibling / younger person"],
+            ["nấm", "mushroom"],
+            ["bà", "grandma"],
+        ];
+
+        const numbersData = [
+            // High Numbers & Currency
+            ["1.000 (một nghìn)", "One thousand"],
+            ["10.000 (mười nghìn)", "Ten thousand"],
+            ["100.000 (một trăm nghìn)", "One hundred thousand"],
+            ["1.000.000 (một triệu)", "One million"],
+            ["5.000.000 (năm triệu)", "Five million"],
+            ["1.200.000 (một triệu hai trăm nghìn)", "One million two hundred thousand"],
+            // Example usage numbers
+            ["88.000 (tám mươi tám nghìn)", "Eighty-eight thousand (Example Price)"],
+            ["125.000 (một trăm hai mươi lăm nghìn)", "One hundred twenty-five thousand (Example Price)"],
+            // Core numbers
+            ["1 (một)", "One"],
+            ["10 (mười)", "Ten"],
+            ["100 (một trăm)", "One hundred"],
+        ];
+
+        const conversationData = [
+            // Conversation 1: Directions and Price Confirmation
+            { speaker: "Bạn", vn: "Xin chào! Cho tôi đi đến **Dinh Độc Lập**.", en: "Hello! Please take me to the **Reunification Palace**."},
+            { speaker: "Tài xế", vn: "Giá là **150.000** VND. Anh đồng ý không?", en: "The price is **150.000** VND. Do you agree?" },
+            { speaker: "Bạn", vn: "**Đúng rồi!** **cảm ơn rất nhiều**!", en: "**That's right!** **Thank you very much**!" },
+            { speaker: "Tài xế", vn: "**Không có gì**! Xin mời!", en: "**You're welcome**! Please come in!" },
+
+            // Conversation 2: Ordering Food and Drink
+            { speaker: "Bạn", vn: "Cho tôi một cái **Bánh xèo** và một ly **cà phê sữa đá**.", en: "Give me one **savory pancake** and one **iced milk coffee**."},
+            { speaker: "Người bán", vn: "Bạn có muốn gọi thêm **Bún bò** không?", en: "Would you like to order more **spicy beef noodle soup**?" },
+            { speaker: "Bạn", vn: "Không, **cảm ơn**. **Làm ơn tính tiền**.", en: "No, **thank you**. **Can I have the bill, please**." },
+            { speaker: "Người bán", vn: "Tổng cộng **88.000** VND. **chờ chút** tôi mang ra.", en: "Total **88.000** VND. **Wait a moment** I will bring it out." },
+
+        ];
+
+
+        // --- Helper Function to Render Items (Unchanged) ---
+
+        function createItemElement(vnWord, enTranslation, index, isConversation = false, speaker = null) {
+            const container = document.createElement('div');
+            container.className = isConversation ? 'flex items-start p-3 rounded-lg border border-gray-100' : 'flex flex-wrap items-center justify-between p-2 hover:bg-blue-50 rounded-lg transition';
+
+            const vnTextElement = document.createElement('span');
+            vnTextElement.className = isConversation ? 'text-lg font-medium pr-4 max-w-[60%]' : 'text-lg font-semibold text-gray-700';
+            
+            let displayVn = vnWord;
+            if (speaker) {
+                // For conversation, show speaker
+                displayVn = `<span class="font-bold text-blue-600">${speaker}:</span> ${vnWord}`;
+            }
+
+            // Sanitizing: only text is rendered, not HTML, for safety.
+            // Using innerHTML here for conversation speaker formatting only, content is controlled.
+            vnTextElement.innerHTML = displayVn; 
+
+            const translationElement = document.createElement('span');
+            translationElement.className = 'translation text-base text-gray-500';
+            translationElement.textContent = enTranslation;
+            translationElement.id = `translation-${index}`;
+
+            const button = document.createElement('button');
+            button.className = 'show-btn px-3 py-1 bg-blue-500 text-white text-sm font-medium rounded-full hover:bg-blue-600 transition duration-150 ease-in-out whitespace-nowrap';
+            button.textContent = 'Show Translation';
+            
+            button.onclick = function() {
+                // Get the translation element by ID
+                const target = document.getElementById(`translation-${index}`);
+                if (target.style.display === 'none' || target.style.display === '') {
+                    target.style.display = 'inline';
+                    this.textContent = 'Hide Translation';
+                } else {
+                    target.style.display = 'none';
+                    this.textContent = 'Show Translation';
+                }
+            };
+
+            if (isConversation) {
+                container.classList.add(speaker === 'Bạn' ? 'bg-indigo-50' : 'bg-gray-100');
+                const textContainer = document.createElement('div');
+                textContainer.className = 'flex-1 flex flex-col sm:flex-row sm:items-center';
+
+                // Add the button
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'mt-2 sm:mt-0 sm:ml-4';
+                buttonContainer.appendChild(button);
+
+                // Combine VN Text and Translation
+                const textWrapper = document.createElement('div');
+                textWrapper.className = 'flex flex-wrap items-center';
+                textWrapper.appendChild(vnTextElement);
+                textWrapper.appendChild(translationElement);
+
+                container.appendChild(textWrapper);
+                container.appendChild(buttonContainer);
+                
+            } else {
+                container.appendChild(vnTextElement);
+
+                const controlGroup = document.createElement('div');
+                controlGroup.className = 'flex items-center space-x-3 mt-2 sm:mt-0';
+                controlGroup.appendChild(button);
+                controlGroup.appendChild(translationElement);
+                
+                container.appendChild(controlGroup);
+            }
+
+            return container;
+        }
+
+
+        // --- Rendering Logic (Unchanged) ---
+
+        function renderData() {
+            const vocabList = document.getElementById('vocabulary-list');
+            const numbersList = document.getElementById('numbers-list');
+            const conversationList = document.getElementById('conversation-list');
+
+            // 1. Render Vocabulary
+            vocabularyData.forEach(([vn, en], index) => {
+                vocabList.appendChild(createItemElement(vn, en, `vocab-${index}`));
+            });
+
+            // 2. Render Numbers
+            numbersData.forEach(([vn, en], index) => {
+                const numberItem = document.createElement('div');
+                numberItem.className = 'flex flex-col space-y-1 p-2 rounded-lg hover:bg-yellow-50';
+                
+                const vnSpan = document.createElement('span');
+                vnSpan.className = 'text-xl font-bold text-yellow-700';
+                vnSpan.textContent = vn;
+                numberItem.appendChild(vnSpan);
+
+                const enSpan = document.createElement('span');
+                enSpan.className = 'translation text-base text-gray-600';
+                enSpan.textContent = en;
+                enSpan.id = `number-trans-${index}`;
+                numberItem.appendChild(enSpan);
+
+                const button = document.createElement('button');
+                button.className = 'show-btn mt-1 w-full text-center px-2 py-1 bg-yellow-500 text-white text-xs font-medium rounded-full hover:bg-yellow-600 transition duration-150 ease-in-out';
+                button.textContent = 'Show Translation';
+                
+                button.onclick = function() {
+                    const target = document.getElementById(`number-trans-${index}`);
+                    if (target.style.display === 'none' || target.style.display === '') {
+                        target.style.display = 'inline';
+                        this.textContent = 'Hide Translation';
+                    } else {
+                        target.style.display = 'none';
+                        this.textContent = 'Show Translation';
+                    }
+                };
+
+                numberItem.appendChild(button);
+                numbersList.appendChild(numberItem);
+            });
+
+            // 3. Render Conversation
+            conversationData.forEach((line, index) => {
+                conversationList.appendChild(createItemElement(line.vn, line.en, `conv-${index}`, true, line.speaker));
+            });
+        }
+
+        // Run the rendering when the window loads
+        window.onload = renderData;
+
+    </script>
+</body>
+</html>
