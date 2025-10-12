@@ -24,6 +24,10 @@
         .card {
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
+        /* Mobile-friendly adjustment for number grid */
+        #numbers-list {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Better fluid columns */
+        }
     </style>
 </head>
 <body class="p-4 sm:p-8">
@@ -44,17 +48,23 @@
         <!-- Numbers Section -->
         <div class="card bg-white p-6 rounded-xl mb-10">
             <h2 class="text-2xl font-bold text-gray-800 border-b pb-3 mb-4">High Numbers & Currency (Số lớn & Tiền tệ)</h2>
-            <div id="numbers-list" class="grid grid-cols-2 sm:grid-cols-3 gap-y-4">
+            <div id="numbers-list" class="grid gap-4">
                 <!-- Number items will be inserted here by JavaScript -->
             </div>
         </div>
 
-        <!-- Conversation Example Section -->
+        <!-- Conversation Example Section (Now separated into blocks) -->
         <div class="card bg-white p-6 rounded-xl">
             <h2 class="text-2xl font-bold text-gray-800 border-b pb-3 mb-4">Conversation Examples (Ví dụ hội thoại)</h2>
-            <div id="conversation-list" class="space-y-3">
-                <!-- Conversation will be inserted here by JavaScript -->
-            </div>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-5">1. Travel & Price Confirmation (Tài xế)</h3>
+            <div id="conversation-travel-list" class="space-y-3 mb-6"></div>
+
+            <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-5">2. Ordering Food & Drink (Bánh xèo, Bún bò)</h3>
+            <div id="conversation-food-1-list" class="space-y-3 mb-6"></div>
+
+            <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-5">3. Ordering Meal & Drink (Cơm tấm)</h3>
+            <div id="conversation-food-2-list" class="space-y-3"></div>
         </div>
 
     </div>
@@ -62,77 +72,94 @@
     <script>
         // --- Data Extracted from Lessons ---
 
-        const vocabularyData = [
-            // Basic Greetings & Politeness
-            ["Xin chào", "Hello"],
-            ["Cảm ơn", "Thank you"],
-            ["cảm ơn rất nhiều", "Thank you very much"],
-            ["Không có gì", "You're welcome"],
-            ["Đúng rồi", "That's right"],
-            ["chờ chút", "Wait a moment"],
-            
-            // Essential Requests & Questions
-            ["Làm ơn tính tiền", "Can I have the bill, please?"],
-            ["Bao nhiêu tiền?", "How much is it?"],
-            ["Cho tôi đi đến...", "Please take me to..."],
-            ["Cho tôi đi đến địa chỉ này", "Please take me to this address"],
-
-            // Food & Drink Items
-            ["cho tÔi một bát phở KHÔNG HÀNH", "Give me a bowl of pho without onion/scallions"],
-            ["Phở", "Noodle soup (General)"],
-            ["Bún bò", "Spicy beef noodle soup (Bún bò Huế)"],
-            ["Cơm tấm", "Broken rice"],
-            ["Bánh xèo", "Savory pancake"],
+        let vocabularyData = [
+            // General Words (alphabetically sorted below)
+            ["ăn", "to eat"],
+            ["Áo dài", "Traditional Vietnamese dress"],
             ["Bánh mì", "Vietnamese sandwich"],
-            ["Cà phê", "Coffee"],
-            ["cà phê sữa đá", "Iced milk coffee"],
-            ["trà đá", "Iced tea"],
+            ["Bánh xèo", "Savory pancake"],
+            ["Bao nhiêu tiền?", "How much is it?"],
             ["Bia", "Beer"],
+            ["Bún bò", "Spicy beef noodle soup (Bún bò Huế)"],
+            ["bà", "grandma"],
+            ["cà phê sữa đá", "Iced milk coffee"],
+            ["Cà phê", "Coffee"],
+            ["cảm ơn rất nhiều", "Thank you very much"],
+            ["Cảm ơn", "Thank you"],
+            ["chờ chút", "Wait a moment"],
+            ["chợ Bến Thành", "Bến Thành market"],
+            ["Cho tôi đi đến địa chỉ này", "Please take me to this address"],
+            ["Cho tôi đi đến...", "Please take me to..."],
+            ["cho tÔi một bát phở KHÔNG HÀNH", "Give me a bowl of pho without onion/scallions"],
+            ["Cơm tấm", "Broken rice"],
+            ["Dinh Độc Lập", "Reunification Palace"],
+            ["đi", "to go"],
+            ["Đúng rồi", "That's right"],
+            ["em", "younger sibling / younger person"],
+            ["Hoa sen", "Lotus flower"],
+            ["Không có gì", "You're welcome"],
+            ["Làm ơn tính tiền", "Can I have the bill, please?"],
+            ["nấm", "mushroom"],
             ["Nước suối", "Bottled water"],
             ["nước mía", "Sugarcane juice"],
-            
-            // Places & General Words
-            ["Dinh Độc Lập", "Reunification Palace"],
-            ["chợ Bến Thành", "Bến Thành market"],
-            ["Áo dài", "Traditional Vietnamese dress"],
-            ["Hoa sen", "Lotus flower"],
-            ["ăn", "to eat"],
-            ["đi", "to go"],
-            ["em", "younger sibling / younger person"],
-            ["nấm", "mushroom"],
-            ["bà", "grandma"],
+            ["Phở", "Noodle soup (General)"],
+            ["trà đá", "Iced tea"],
+            ["Xin chào", "Hello"],
         ];
 
+        // Sort the vocabulary data alphabetically by the Vietnamese word (index 0)
+        vocabularyData.sort((a, b) => a[0].localeCompare(b[0], 'vi', { sensitivity: 'base' }));
+
+
         const numbersData = [
-            // High Numbers & Currency
+            // NEW High Numbers & Currency (requested additions first)
+            ["123.000 (một trăm hai mươi ba nghìn)", "One hundred twenty-three thousand"],
+            ["523.000 (năm trăm hai mươi ba nghìn)", "Five hundred twenty-three thousand"],
+            ["824.000 (tám trăm hai mươi tư nghìn)", "Eight hundred twenty-four thousand"],
+            ["491.000 (bốn trăm chín mươi mốt nghìn)", "Four hundred ninety-one thousand"],
+            ["954.000 (chín trăm năm mươi tư nghìn)", "Nine hundred fifty-four thousand"],
+            ["419.000 (bốn trăm mười chín nghìn)", "Four hundred nineteen thousand"],
+            ["401.000 (bốn trăm linh một nghìn)", "Four hundred one thousand"],
+            ["400.000 (bốn trăm nghìn)", "Four hundred thousand"],
+            ["614.000 (sáu trăm mười bốn nghìn)", "Six hundred fourteen thousand"],
+            
+            // Existing High Numbers & Currency (used as reference)
             ["1.000 (một nghìn)", "One thousand"],
             ["10.000 (mười nghìn)", "Ten thousand"],
             ["100.000 (một trăm nghìn)", "One hundred thousand"],
+            ["150.000 (một trăm năm mươi nghìn)", "One hundred fifty thousand"],
             ["1.000.000 (một triệu)", "One million"],
             ["5.000.000 (năm triệu)", "Five million"],
             ["1.200.000 (một triệu hai trăm nghìn)", "One million two hundred thousand"],
-            // Example usage numbers
-            ["88.000 (tám mươi tám nghìn)", "Eighty-eight thousand (Example Price)"],
-            ["125.000 (một trăm hai mươi lăm nghìn)", "One hundred twenty-five thousand (Example Price)"],
             // Core numbers
             ["1 (một)", "One"],
             ["10 (mười)", "Ten"],
             ["100 (một trăm)", "One hundred"],
         ];
 
-        const conversationData = [
-            // Conversation 1: Directions and Price Confirmation
+        // Conversations separated into distinct blocks
+        const conversationTravel = [
+            // Conversation 1: Travel and Price Confirmation (All words)
             { speaker: "Bạn", vn: "Xin chào! Cho tôi đi đến **Dinh Độc Lập**.", en: "Hello! Please take me to the **Reunification Palace**."},
-            { speaker: "Tài xế", vn: "Giá là **150.000** VND. Anh đồng ý không?", en: "The price is **150.000** VND. Do you agree?" },
+            { speaker: "Tài xế", vn: "Giá là **một trăm năm mươi nghìn** VND. Anh đồng ý không?", en: "The price is **150.000** VND. Do you agree?" },
             { speaker: "Bạn", vn: "**Đúng rồi!** **cảm ơn rất nhiều**!", en: "**That's right!** **Thank you very much**!" },
             { speaker: "Tài xế", vn: "**Không có gì**! Xin mời!", en: "**You're welcome**! Please come in!" },
+        ];
 
-            // Conversation 2: Ordering Food and Drink
+        const conversationFoodOrder1 = [
+            // Conversation 2: Ordering Food and Drink (All words)
             { speaker: "Bạn", vn: "Cho tôi một cái **Bánh xèo** và một ly **cà phê sữa đá**.", en: "Give me one **savory pancake** and one **iced milk coffee**."},
             { speaker: "Người bán", vn: "Bạn có muốn gọi thêm **Bún bò** không?", en: "Would you like to order more **spicy beef noodle soup**?" },
             { speaker: "Bạn", vn: "Không, **cảm ơn**. **Làm ơn tính tiền**.", en: "No, **thank you**. **Can I have the bill, please**." },
-            { speaker: "Người bán", vn: "Tổng cộng **88.000** VND. **chờ chút** tôi mang ra.", en: "Total **88.000** VND. **Wait a moment** I will bring it out." },
+            { speaker: "Người bán", vn: "Tổng cộng **tám mươi tám nghìn** VND. **chờ chút** tôi mang ra.", en: "Total **88.000** VND. **Wait a moment** I will bring it out." },
+        ];
 
+        const conversationFoodOrder2 = [
+            // Conversation 3: New Food Ordering Example with All Words (Cơm tấm)
+            { speaker: "Bạn", vn: "Cho tôi một phần **Cơm tấm** và một chai **Nước suối**.", en: "Give me one portion of **Broken Rice** and one bottle of **Bottled Water**."},
+            { speaker: "Người bán", vn: "Tổng cộng **một trăm hai mươi lăm nghìn** VND. Của bạn đây.", en: "Total **125.000** VND. Here you go." },
+            { speaker: "Bạn", vn: "Tôi gửi tiền. **cảm ơn rất nhiều**.", en: "Here is the money. **Thank you very much**." },
+            { speaker: "Người bán", vn: "**Không có gì**.", en: "**You're welcome**." },
         ];
 
 
@@ -140,10 +167,11 @@
 
         function createItemElement(vnWord, enTranslation, index, isConversation = false, speaker = null) {
             const container = document.createElement('div');
-            container.className = isConversation ? 'flex items-start p-3 rounded-lg border border-gray-100' : 'flex flex-wrap items-center justify-between p-2 hover:bg-blue-50 rounded-lg transition';
+            container.className = isConversation ? 'flex flex-col sm:flex-row sm:items-center p-3 rounded-lg border border-gray-100' : 'flex flex-wrap items-center justify-between p-2 hover:bg-blue-50 rounded-lg transition';
 
             const vnTextElement = document.createElement('span');
-            vnTextElement.className = isConversation ? 'text-lg font-medium pr-4 max-w-[60%]' : 'text-lg font-semibold text-gray-700';
+            // Adjusting max-width for better mobile wrap
+            vnTextElement.className = isConversation ? 'text-lg font-medium pr-4 max-w-full sm:max-w-[60%]' : 'text-lg font-semibold text-gray-700';
             
             let displayVn = vnWord;
             if (speaker) {
@@ -178,19 +206,17 @@
 
             if (isConversation) {
                 container.classList.add(speaker === 'Bạn' ? 'bg-indigo-50' : 'bg-gray-100');
-                const textContainer = document.createElement('div');
-                textContainer.className = 'flex-1 flex flex-col sm:flex-row sm:items-center';
-
-                // Add the button
-                const buttonContainer = document.createElement('div');
-                buttonContainer.className = 'mt-2 sm:mt-0 sm:ml-4';
-                buttonContainer.appendChild(button);
-
-                // Combine VN Text and Translation
+                
+                // Text wrapper containing VN text and hidden EN text
                 const textWrapper = document.createElement('div');
-                textWrapper.className = 'flex flex-wrap items-center';
+                textWrapper.className = 'flex-1 flex flex-wrap items-center mb-2 sm:mb-0';
                 textWrapper.appendChild(vnTextElement);
                 textWrapper.appendChild(translationElement);
+
+                // Control group for the button, aligning to the right on desktop
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'w-full sm:w-auto sm:ml-4';
+                buttonContainer.appendChild(button);
 
                 container.appendChild(textWrapper);
                 container.appendChild(buttonContainer);
@@ -210,12 +236,24 @@
         }
 
 
-        // --- Rendering Logic (Unchanged) ---
+        // --- Rendering Logic ---
 
         function renderData() {
             const vocabList = document.getElementById('vocabulary-list');
             const numbersList = document.getElementById('numbers-list');
-            const conversationList = document.getElementById('conversation-list');
+            
+            // Conversation containers
+            const travelList = document.getElementById('conversation-travel-list');
+            const food1List = document.getElementById('conversation-food-1-list');
+            const food2List = document.getElementById('conversation-food-2-list');
+            
+            // Clear existing lists before rendering new data
+            vocabList.innerHTML = '';
+            numbersList.innerHTML = '';
+            travelList.innerHTML = '';
+            food1List.innerHTML = '';
+            food2List.innerHTML = '';
+
 
             // 1. Render Vocabulary
             vocabularyData.forEach(([vn, en], index) => {
@@ -225,15 +263,15 @@
             // 2. Render Numbers
             numbersData.forEach(([vn, en], index) => {
                 const numberItem = document.createElement('div');
-                numberItem.className = 'flex flex-col space-y-1 p-2 rounded-lg hover:bg-yellow-50';
+                numberItem.className = 'flex flex-col space-y-1 p-2 rounded-lg hover:bg-yellow-50 border border-yellow-100';
                 
                 const vnSpan = document.createElement('span');
-                vnSpan.className = 'text-xl font-bold text-yellow-700';
+                vnSpan.className = 'text-base font-bold text-yellow-700';
                 vnSpan.textContent = vn;
                 numberItem.appendChild(vnSpan);
 
                 const enSpan = document.createElement('span');
-                enSpan.className = 'translation text-base text-gray-600';
+                enSpan.className = 'translation text-sm text-gray-600';
                 enSpan.textContent = en;
                 enSpan.id = `number-trans-${index}`;
                 numberItem.appendChild(enSpan);
@@ -257,9 +295,15 @@
                 numbersList.appendChild(numberItem);
             });
 
-            // 3. Render Conversation
-            conversationData.forEach((line, index) => {
-                conversationList.appendChild(createItemElement(line.vn, line.en, `conv-${index}`, true, line.speaker));
+            // 3. Render Conversations in separate blocks
+            conversationTravel.forEach((line, index) => {
+                travelList.appendChild(createItemElement(line.vn, line.en, `conv-travel-${index}`, true, line.speaker));
+            });
+            conversationFoodOrder1.forEach((line, index) => {
+                food1List.appendChild(createItemElement(line.vn, line.en, `conv-food1-${index}`, true, line.speaker));
+            });
+            conversationFoodOrder2.forEach((line, index) => {
+                food2List.appendChild(createItemElement(line.vn, line.en, `conv-food2-${index}`, true, line.speaker));
             });
         }
 
