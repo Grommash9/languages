@@ -1,349 +1,552 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vietnamese Vocabulary Exercise - Lessons & Homework</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Custom font */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f7f9fb;
-        }
-        .translation {
-            /* Initially hidden */
-            display: none; 
-            color: #3b82f6;
-            font-style: italic;
-            margin-left: 0.5rem;
-        }
-        .card {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        /* Mobile-friendly adjustment for number grid */
-        #numbers-list {
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Better fluid columns */
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vietnamese Self-Development Helper</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #1f2937;
+        }
+        .translation {
+            display: none; 
+            color: #4b5563;
+            font-style: italic;
+            margin-top: 0.25rem;
+        }
+        .highlight-box {
+            background-color: #fffbeb;
+            border-left: 4px solid #f59e0b;
+        }
+        .dialogue-bubble {
+            position: relative;
+            padding: 1rem;
+            border-radius: 1rem;
+            max-width: 85%;
+        }
+        .bubble-left {
+            background-color: #e0e7ff; /* Indigo 100 */
+            color: #1e1b4b;
+            border-bottom-left-radius: 0;
+            margin-right: auto;
+        }
+        .bubble-right {
+            background-color: #d1fae5; /* Emerald 100 */
+            color: #064e3b;
+            border-bottom-right-radius: 0;
+            margin-left: auto;
+        }
+        .speaker-label {
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+        .hidden-text {
+            filter: blur(4px);
+            transition: filter 0.3s ease;
+            cursor: pointer;
+        }
+        .hidden-text:hover, .hidden-text.revealed {
+            filter: blur(0);
+        }
+        .tab-btn.active-tab {
+            background-color: #dbeafe; /* Blue 100 */
+            color: #1d4ed8; /* Blue 700 */
+        }
+        .number-card {
+            transition: transform 0.2s;
+        }
+        .number-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
-<body class="p-4 sm:p-8">
-    <div class="max-w-4xl mx-auto">
+<body class="p-4 md:p-8">
 
-                <div class="card bg-white p-6 rounded-xl mb-10">
-            <h2 class="text-2xl font-bold text-gray-800 border-b pb-3 mb-4">Vocabulary for Homework & Repeating</h2>
-            <div id="vocabulary-list" class="space-y-4">
-                            </div>
-        </div>
+    <div class="max-w-6xl mx-auto space-y-8">
+        
+        <!-- HEADER -->
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-blue-800 mb-2">Vietnamese Self-Development</h1>
+            <p class="text-gray-600">Reviewing lessons, dialogues, and cultural notes.</p>
+        </header>
 
-                <div class="card bg-white p-6 rounded-xl mb-10">
-            <h2 class="text-2xl font-bold text-gray-800 border-b pb-3 mb-4">High Numbers & Currency (Số lớn & Tiền tệ)</h2>
-            <div id="numbers-list" class="grid gap-4">
-                            </div>
-        </div>
-
-                <div class="card bg-white p-6 rounded-xl">
-            <h2 class="text-2xl font-bold text-gray-800 border-b pb-3 mb-4">Lesson Dialogues (Hội thoại bài học)</h2>
-            
-            <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-5">Lesson 1: Transport & Greetings (Đi lại & Chào hỏi)</h3>
-            <div id="conversation-lesson-1-travel" class="space-y-3 mb-6"></div>
-
-            <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-5">Lesson 2: Food Ordering & Payment (Gọi món & Tính tiền)</h3>
-            <div id="conversation-lesson-2-food" class="space-y-3 mb-6"></div>
-
-            <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-5">Lesson 3: Utility & Direction (Tiện ích & Hướng đi)</h3>
-            <div id="conversation-lesson-3-utility" class="space-y-3"></div>
-        </div>
-
-    </div>
-
-    <script>
-        // --- Data Extracted and Organized from Lessons ---
-
-        // NEW: Core Vocabulary organized by Lesson/Topic (Merged and sorted later)
-        const lesson_1_travel_vocab = [
-            ["Xin chào", "Hello"],
-            ["Đúng rồi", "That's right"],
-            ["Cảm ơn", "Thank you / Thanks"],
-            ["cảm ơn rất nhiều", "Thank you very much"],
-            ["Không có gì", "You're welcome"],
-            ["chợ Bến Thành", "Bến Thành market"],
-            ["Dinh Độc Lập", "Reunification Palace"],
-            ["Cho tôi đi đến địa chỉ này", "Please take me to this address"],
-            ["Cho tôi đi đến...", "Please take me to..."],
-            ["Anh đặt xe đến... đúng không?", "Did you book a ride to... right?"],
-            ["đi", "to go"],
-            ["Tài xế", "Driver (Contextual)"],
-            ["Xin mời!", "Please come in!"],
-        ];
-
-        const lesson_2_food_vocab = [
-            ["ăn", "to eat"],
-            ["uống", "to drink"],
-            ["Anh muốn ăn gì ạ?", "What would you want to eat?"],
-            ["Anh chị muốn uống gì ?", "What do you want to drink?"],
-            ["Cho tôi + number + name of dish/drink", "Number + name of dish/ drink, please."],
-            ["Cho tôi + number + name of dish/ drink + không something.", "Number + name of dish/ drink without something, please."],
-            ["Bánh mì", "Vietnamese sandwich"],
-            ["Bánh xèo", "Savory pancake"],
-            ["Bún bò", "Spicy beef noodle soup (Bún bò Huế)"],
-            ["Cơm tấm", "Broken rice"],
-            ["Phở", "Noodle soup (General)"],
-            ["Hủ tiếu", "Clear noodle soup"],
-            ["Bia", "Beer"],
-            ["Nước suối", "Bottled water"],
-            ["trà đá", "Iced tea"],
-            ["Cà phê", "Coffee"],
-            ["cà phê sữa đá", "Iced milk coffee"],
-            ["cà phê trứng", "Egg coffee"],
-            ["trái dừa", "Coconut"],
-            ["nước mía", "Sugarcane juice"],
-            ["hành", "onion / scallions"],
-        ];
-
-        const lesson_3_utility_vocab = [
-            ["Làm ơn tính tiền", "Can I have the bill, please?"],
-            ["Bao nhiêu tiền?", "How much is it?"],
-            ["Có... không?", "Is/Are there something?"],
-            ["Có", "Yes"],
-            ["Không", "No"],
-            ["Xin lỗi", "Excuse me / Sorry"],
-            ["toilet", "Toilet / Restroom"],
-            ["menu", "Menu"],
-            ["Wi Fi", "Wi Fi"],
-            ["chờ chút", "Wait a moment"],
-            ["Hướng này", "This way"],
-            ["Tôi tên là...", "I am..."],
-            ["Bạn tên là gì?", "What is your name?"],
-            ["Bạn là người nước nào?", "What is your nationality?"],
-            ["Tôi là người Anh", "I am English"],
-            ["Dạ", "Yes / Sure (polite particle)"],
+        <!-- SECTION 1: INTERESTING THINGS & CULTURAL NOTES -->
+        <section class="bg-white rounded-2xl shadow-sm p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-gray-800 border-b pb-4 mb-6 flex items-center">
+                <i class="fas fa-lightbulb text-yellow-500 mr-3"></i>
+                Interesting Things & Cultural Notes
+            </h2>
             
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Note 1 -->
+                <div class="highlight-box p-4 rounded-r-lg">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">The Softening Particles: "Nha" & "Nhé"</h3>
+                    <p class="text-gray-700 mb-2">These are "feeling words" placed at the end of a sentence to make it sound softer and friendlier.</p>
+                    <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
+                        <li><span class="font-semibold text-blue-700">Đợi một chút nha.</span> (Wait a moment, okay?)</li>
+                        <li><span class="font-semibold text-blue-700">Cảm ơn chị nha.</span> (Thanks, sis!)</li>
+                        <li>It shows friendliness and reduces harshness.</li>
+                    </ul>
+                </div>
+
+                <!-- Note 2 -->
+                <div class="highlight-box p-4 rounded-r-lg">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">The Polite "Dạ"</h3>
+                    <p class="text-gray-700 mb-2">Used to show respect, especially to older people. It functions as a polite "Yes" or just a polite starter.</p>
+                    <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
+                        <li>When called ("Alex ơi!"), respond with <span class="font-semibold text-blue-700">"Dạ"</span>.</li>
+                        <li>Use it before answering questions: <span class="font-semibold text-blue-700">"Dạ, được."</span> (Yes, possible).</li>
+                    </ul>
+                </div>
+
+                <!-- Note 3 -->
+                <div class="highlight-box p-4 rounded-r-lg">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">Pronoun Strategy</h3>
+                    <p class="text-gray-700 mb-2">You don't always need to ask age. Look at their face to guess:</p>
+                    <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
+                        <li><strong>Em:</strong> Looks younger than you.</li>
+                        <li><strong>Anh/Chị:</strong> Looks a bit older (Brother/Sister).</li>
+                        <li><strong>Cô/Chú:</strong> Looks like your parents' age (Aunt/Uncle).</li>
+                        <li><strong>Ông/Bà:</strong> Looks like your grandparents' age.</li>
+                        <li><em>Tip: If unsure, be polite and use a slightly higher status (e.g., call them Anh/Chị instead of Em).</em></li>
+                    </ul>
+                </div>
+
+                <!-- Note 4 -->
+                <div class="highlight-box p-4 rounded-r-lg">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">Structure: "Được không?" (Can I?)</h3>
+                    <p class="text-gray-700 mb-2">Put this at the end of a sentence to ask for permission or ability.</p>
+                    <p class="text-sm text-gray-600 bg-white p-2 rounded border border-yellow-200">
+                        <strong>Action + được không?</strong><br>
+                        Example: <em>Giảm giá được không?</em> (Discount okay?)<br>
+                        Example: <em>Ngồi đây được không?</em> (Sit here okay?)
+                    </p>
+                </div>
+
+                <!-- Note 5 -->
+                <div class="highlight-box p-4 rounded-r-lg">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">Number Rules (1, 5, 10)</h3>
+                    <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
+                        <li><strong>1 (Một):</strong> Becomes <em>mốt</em> after 20 (e.g., 21 = hai mươi mốt).</li>
+                        <li><strong>5 (Năm):</strong> Becomes <em>lăm</em> after 10 (e.g., 15 = mười lăm, 25 = hai mươi lăm).</li>
+                        <li><strong>10 (Mười):</strong> Becomes <em>mươi</em> (tens marker) after 20 (e.g., 20 = hai mươi).</li>
+                        <li><strong>Zero (0) in hundreds:</strong> Read as <em>lẻ</em> or <em>linh</em> (e.g., 101 = một trăm lẻ một).</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: PRACTICE DIALOGUES -->
+        <section class="bg-white rounded-2xl shadow-sm p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-gray-800 border-b pb-4 mb-6 flex items-center">
+                <i class="fas fa-comments text-blue-500 mr-3"></i>
+                Practice Dialogues
+            </h2>
+            <p class="mb-4 text-sm text-gray-500">Hover or click blurred text to reveal translations.</p>
+
+            <!-- TABS -->
+            <div class="flex flex-wrap gap-2 mb-6" id="dialogue-tabs">
+                <button onclick="switchTab('introductions')" class="tab-btn px-4 py-2 bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 font-medium transition-colors" data-tab="introductions">Introductions (Ông/Chú)</button>
+                <button onclick="switchTab('restaurant')" class="tab-btn px-4 py-2 bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 font-medium active-tab transition-colors" data-tab="restaurant">Restaurant (Bánh Xèo)</button>
+                <button onclick="switchTab('shopping')" class="tab-btn px-4 py-2 bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 font-medium transition-colors" data-tab="shopping">Shopping (Haggling)</button>
+                <button onclick="switchTab('utility')" class="tab-btn px-4 py-2 bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 font-medium transition-colors" data-tab="utility">Utility & Directions</button>
+                <button onclick="switchTab('taxi')" class="tab-btn px-4 py-2 bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 font-medium transition-colors" data-tab="taxi">Taxi</button>
+            </div>
+
+            <!-- DIALOGUE: INTRODUCTIONS (NEW from lessons.txt) -->
+            <div id="introductions" class="dialogue-container space-y-4 hidden">
+                <div class="text-center text-xs text-gray-400 font-bold mb-2">SCENARIO: Meeting an older man (Ông)</div>
+                <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You (Con)</span>
+                    <p class="text-lg">Con chào Ông.</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Hello Grandpa (Sir).</p>
+                </div>
+                <div class="dialogue-bubble bubble-left">
+                    <span class="speaker-label">Older Man (Ông)</span>
+                    <p class="text-lg">Ông chào con. Con tên là gì?</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Hello child. What is your name?</p>
+                </div>
+                <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You</span>
+                    <p class="text-lg">Con tên là Alex.</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">My name is Alex.</p>
+                </div>
+                <div class="dialogue-bubble bubble-left">
+                    <span class="speaker-label">Older Man</span>
+                    <p class="text-lg">Con bao nhiêu tuổi?</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">How old are you?</p>
+                </div>
+                <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You</span>
+                    <p class="text-lg">Con 29 (hai mươi chín) tuổi.</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">I am 29 years old.</p>
+                </div>
+                <div class="dialogue-bubble bubble-left">
+                    <span class="speaker-label">Older Man</span>
+                    <p class="text-lg">Con là người nước nào?</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">What is your nationality?</p>
+                </div>
+                 <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You</span>
+                    <p class="text-lg">Con là người Anh.</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">I am British.</p>
+                </div>
+                <div class="dialogue-bubble bubble-left">
+                    <span class="speaker-label">Older Man</span>
+                    <p class="text-lg">Con làm nghề gì?</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">What is your job?</p>
+                </div>
+                <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You</span>
+                    <p class="text-lg">Con là lập trình viên (IT).</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">I am a programmer (IT).</p>
+                </div>
+            </div>
+
+            <!-- DIALOGUE: RESTAURANT -->
+            <div id="restaurant" class="dialogue-container space-y-4">
+                <div class="dialogue-bubble bubble-left">
+                    <span class="speaker-label">Waitress (Chị)</span>
+                    <p class="text-lg">Chào em. Em muốn ăn gì?</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Hello. What do you want to eat?</p>
+                </div>
+                <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You (Em)</span>
+                    <p class="text-lg">Cho hai bánh xèo.</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Give me two Banh Xeo.</p>
+                </div>
+                <div class="dialogue-bubble bubble-left">
+                    <span class="speaker-label">Waitress</span>
+                    <p class="text-lg">Ừ. Hai bánh xèo. Em muốn uống gì?</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Okay. Two Banh Xeo. What do you want to drink?</p>
+                </div>
+                <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You</span>
+                    <p class="text-lg">Cho tôi 1 trà đá và 1 nước suối.</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Give me 1 iced tea and 1 bottled water.</p>
+                </div>
+                <div class="dialogue-bubble bubble-left">
+                    <span class="speaker-label">Waitress</span>
+                    <p class="text-lg">Ok. Đợi một chút nha.</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Ok. Wait a moment (soft particle).</p>
+                </div>
+                <div class="text-center text-gray-400 text-xs my-2">- Food Arrives -</div>
+                <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You</span>
+                    <p class="text-lg">Cảm ơn chị nha.</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Thank you (sister).</p>
+                </div>
+                <!-- Small Talk -->
+                <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You</span>
+                    <p class="text-lg">Chị ơi! Làm ơn tính tiền.</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Sister! Please calculate the money (Bill please).</p>
+                </div>
+            </div>
+
+            <!-- DIALOGUE: SHOPPING -->
+            <div id="shopping" class="dialogue-container space-y-4 hidden">
+                <!-- Generic Shopping -->
+                <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You</span>
+                    <p class="text-lg">Cái này bao nhiêu tiền?</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">How much is this?</p>
+                </div>
+                <div class="dialogue-bubble bubble-left">
+                    <span class="speaker-label">Seller</span>
+                    <p class="text-lg">125.000 (Một trăm hai mươi lăm nghìn).</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">125,000.</p>
+                </div>
+                <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You</span>
+                    <p class="text-lg">Giảm giá được không?</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Can you discount?</p>
+                </div>
+                
+                <!-- Specific Case: Hat (Nón lá) -->
+                <div class="text-center text-xs text-gray-400 font-bold mt-6 mb-2">SCENARIO: Buying a Hat (Nón lá)</div>
+                <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You</span>
+                    <p class="text-lg">Cái này bao nhiêu tiền?</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">How much is this?</p>
+                </div>
+                <div class="dialogue-bubble bubble-left">
+                    <span class="speaker-label">Seller (Bà)</span>
+                    <p class="text-lg">67.000 (Sáu mươi bảy nghìn).</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">67,000.</p>
+                </div>
+                <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You</span>
+                    <p class="text-lg">Có cái khác không?</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Do you have another one?</p>
+                </div>
+
+                <!-- Specific Case: T-Shirt (Áo) -->
+                <div class="text-center text-xs text-gray-400 font-bold mt-6 mb-2">SCENARIO: Buying a T-Shirt (Áo)</div>
+                <div class="dialogue-bubble bubble-left">
+                    <span class="speaker-label">Seller</span>
+                    <p class="text-lg">130.000 (Một trăm ba mươi nghìn).</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">130,000.</p>
+                </div>
+                <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You</span>
+                    <p class="text-lg">Giảm giá được không?</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Can you discount?</p>
+                </div>
+                 <div class="dialogue-bubble bubble-left">
+                    <span class="speaker-label">Seller</span>
+                    <p class="text-lg">Xin lỗi không được.</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Sorry, no.</p>
+                </div>
+            </div>
+
+            <!-- DIALOGUE: UTILITY & DIRECTIONS (FROM ORIGINAL HTML) -->
+            <div id="utility" class="dialogue-container space-y-4 hidden">
+                 <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You</span>
+                    <p class="text-lg">Xin lỗi. Có toilet không?</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Excuse me. Is there a toilet?</p>
+                </div>
+                <div class="dialogue-bubble bubble-left">
+                    <span class="speaker-label">Staff</span>
+                    <p class="text-lg">Có. Hướng này.</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Yes. This way.</p>
+                </div>
+                <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You</span>
+                    <p class="text-lg">Có menu không?</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Do you have a menu?</p>
+                </div>
+                 <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You</span>
+                    <p class="text-lg">Có wifi không?</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Do you have wifi?</p>
+                </div>
+                <div class="dialogue-bubble bubble-left">
+                    <span class="speaker-label">Staff</span>
+                    <p class="text-lg">Dạ có. Password là 888.</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Yes. Password is 888.</p>
+                </div>
+            </div>
+
+            <!-- DIALOGUE: TAXI -->
+            <div id="taxi" class="dialogue-container space-y-4 hidden">
+                <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You</span>
+                    <p class="text-lg">Cho tôi đi đến địa chỉ này.</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Please take me to this address.</p>
+                </div>
+                <div class="dialogue-bubble bubble-left">
+                    <span class="speaker-label">Driver</span>
+                    <p class="text-lg">Anh chị đến Việt Nam du lịch hả?</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">You (two) came to Vietnam to travel?</p>
+                </div>
+                <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You</span>
+                    <p class="text-lg">Đúng rồi. Lần đầu đến Việt Nam.</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">That's right. First time coming to Vietnam.</p>
+                </div>
+                <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You (Can't hear well)</span>
+                    <p class="text-lg">Xin lỗi, nói lại được không? Làm ơn nói chậm thôi.</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Sorry, can you say that again? Please speak slowly.</p>
+                </div>
+                 <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You (Asking to pay)</span>
+                    <p class="text-lg">Bao nhiêu tiền?</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">How much money?</p>
+                </div>
+                 <div class="dialogue-bubble bubble-right">
+                    <span class="speaker-label">You (Card payment?)</span>
+                    <p class="text-lg">Thanh toán bằng thẻ được không?</p>
+                    <p class="hidden-text text-sm text-gray-500 mt-1">Pay by card okay?</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: NUMBERS & CURRENCY (FROM ORIGINAL HTML) -->
+        <section class="bg-white rounded-2xl shadow-sm p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-gray-800 border-b pb-4 mb-6 flex items-center">
+                <i class="fas fa-money-bill-wave text-green-600 mr-3"></i>
+                High Numbers & Currency
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="numbers-grid">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- SECTION 4: VOCABULARY LIST (MERGED) -->
+        <section class="bg-white rounded-2xl shadow-sm p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-gray-800 border-b pb-4 mb-6 flex items-center">
+                <i class="fas fa-book text-blue-500 mr-3"></i>
+                Complete Vocabulary & Phrases Bank
+            </h2>
+            <div id="vocab-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Javascript will populate this -->
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // --- DATA ---
+        
+        // Merged Vocabulary from Original HTML + Lessons
+        const vocabulary = [
+            // Transport / Action
+            { vn: "Đi đến", en: "Go to" },
+            { vn: "Địa chỉ", en: "Address" },
+            { vn: "Sân bay", en: "Airport" },
+            { vn: "Dừng lại", en: "Stop" },
+            { vn: "Chụp hình", en: "Take a photo" },
+            { vn: "Hút thuốc", en: "Smoke" },
+            { vn: "Thanh toán", en: "To pay" },
+            { vn: "Tài xế", en: "Driver" },
+            { vn: "Đi", en: "To go" },
+            
+            // Shopping
+            { vn: "Cái này", en: "This one" },
+            { vn: "Cái khác", en: "The other one" },
+            { vn: "Màu", en: "Color" },
+            { vn: "Giảm giá", en: "Discount" },
+            { vn: "Mắc quá", en: "Too expensive" },
+            { vn: "Rẻ quá", en: "Very cheap" },
+            { vn: "Thử", en: "Try (try on/try eat)" },
+            { vn: "Nón lá", en: "Conical hat" },
+            { vn: "Áo", en: "Shirt" },
+            { vn: "Áo dài", en: "Traditional dress" },
+
+            // Food & Drink (From Original HTML)
+            { vn: "Ăn", en: "To eat" },
+            { vn: "Uống", en: "To drink" },
+            { vn: "Bánh xèo", en: "Vietnamese crepe" },
+            { vn: "Bánh mì", en: "Vietnamese sandwich" },
+            { vn: "Phở", en: "Noodle soup" },
+            { vn: "Bún bò", en: "Spicy beef noodle" },
+            { vn: "Cơm tấm", en: "Broken rice" },
+            { vn: "Hủ tiếu", en: "Clear noodle soup" },
+            { vn: "Bia", en: "Beer" },
+            { vn: "Nước suối", en: "Bottled water" },
+            { vn: "Trà đá", en: "Iced tea" },
+            { vn: "Cà phê", en: "Coffee" },
+            { vn: "Cà phê sữa đá", en: "Iced milk coffee" },
+            { vn: "Trái dừa", en: "Coconut" },
+            { vn: "Nước mía", en: "Sugarcane juice" },
+            { vn: "Hành", en: "Onion/Scallions" },
+            
+            // Common Phrases (Utility/Politeness)
+            { vn: "Xin chào", en: "Hello" },
+            { vn: "Cảm ơn", en: "Thank you" },
+            { vn: "Không có gì", en: "You're welcome" },
+            { vn: "Xin lỗi", en: "Excuse me / Sorry" },
+            { vn: "Làm ơn tính tiền", en: "Bill please" },
+            { vn: "Bao nhiêu tiền?", en: "How much?" },
+            { vn: "Có ... không?", en: "Is there ...?" },
+            { vn: "Toilet", en: "Restroom" },
+            { vn: "Hướng này", en: "This way" },
+            { vn: "Chờ chút", en: "Wait a moment" },
+            
+            // People/Pronouns
+            { vn: "Vợ", en: "Wife" },
+            { vn: "Người nước nào?", en: "Which country person?" },
+            { vn: "Người Anh", en: "British person" },
+            { vn: "Ông/Bà", en: "Grandpa/Grandma (respectful)" },
+            { vn: "Cô/Chú", en: "Aunt/Uncle (respectful)" },
+            { vn: "Anh/Chị/Em", en: "Brother/Sister/Younger" },
         ];
+
+        // Numbers from Original HTML
+        const numbersList = [
+            { vn: "Một trăm hai mươi ba nghìn", en: "123.000" },
+            { vn: "Năm trăm hai mươi ba nghìn", en: "523.000" },
+            { vn: "Tám trăm hai mươi tư nghìn", en: "824.000" },
+            { vn: "Bốn trăm chín mươi mốt nghìn", en: "491.000" },
+            { vn: "Chín trăm năm mươi tư nghìn", en: "954.000" },
+            { vn: "Bốn trăm mười chín nghìn", en: "419.000" },
+            { vn: "Bốn trăm linh một nghìn", en: "401.000" },
+            { vn: "Bốn trăm nghìn", en: "400.000" },
+            { vn: "Sáu trăm mười bốn nghìn", en: "614.000" },
+            { vn: "Một triệu", en: "1.000.000" },
+            { vn: "Một triệu hai trăm nghìn", en: "1.200.000" }
+        ];
+
+        // --- RENDER VOCABULARY ---
+        const vocabGrid = document.getElementById('vocab-grid');
+        // Sort vocabulary alphabetically by VN
+        vocabulary.sort((a, b) => a.vn.localeCompare(b.vn));
         
-        // Combine all vocabulary for the main list and sort
-        let combinedVocab = [...lesson_1_travel_vocab, ...lesson_2_food_vocab, ...lesson_3_utility_vocab, 
-                             ["Áo dài", "Traditional Vietnamese dress"], 
-                             ["bà", "grandma"],
-                             ["em", "younger sibling / younger person"],
-                             ["Hoa sen", "Lotus flower"],
-                             ["nấm", "mushroom"],
-                             // Remove duplicates and keep only unique VN words
-                            ];
-        
-        let uniqueVocabMap = new Map();
-        combinedVocab.forEach(([vn, en]) => {
-            uniqueVocabMap.set(vn, en);
+        vocabulary.forEach(item => {
+            const card = document.createElement('div');
+            card.className = "bg-gray-50 p-3 rounded-lg border border-gray-100 hover:border-blue-300 transition-colors cursor-pointer group shadow-sm";
+            card.onclick = () => {
+                const trans = card.querySelector('.translation');
+                trans.style.display = trans.style.display === 'block' ? 'none' : 'block';
+            };
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <span class="font-bold text-gray-800 text-lg">${item.vn}</span>
+                    <i class="fas fa-eye text-gray-300 group-hover:text-blue-400 text-xs"></i>
+                </div>
+                <div class="translation text-blue-600 font-medium">${item.en}</div>
+            `;
+            vocabGrid.appendChild(card);
         });
-        
-        let vocabularyData = Array.from(uniqueVocabMap).sort((a, b) => a[0].localeCompare(b[0], 'vi', { sensitivity: 'base' }));
 
+        // --- RENDER NUMBERS ---
+        const numbersGrid = document.getElementById('numbers-grid');
+        numbersList.forEach(item => {
+            const card = document.createElement('div');
+            card.className = "number-card bg-green-50 p-3 rounded-lg border border-green-100 hover:bg-green-100 cursor-pointer";
+            card.onclick = () => {
+                const trans = card.querySelector('.translation');
+                trans.style.display = trans.style.display === 'block' ? 'none' : 'block';
+            };
+            
+            card.innerHTML = `
+                <div class="font-bold text-green-800">${item.vn}</div>
+                <div class="translation text-green-600 font-mono font-bold text-lg">${item.en}</div>
+            `;
+            numbersGrid.appendChild(card);
+        });
 
-        const numbersData = [
-            // NEW High Numbers & Currency (requested additions first)
-            [" một trăm hai mươi ba nghìn", "123.000 One hundred twenty-three thousand"],
-            [" năm trăm hai mươi ba nghìn", "523.000 Five hundred twenty-three thousand"],
-            ["tám trăm hai mươi tư nghìn", "824.000  Eight hundred twenty-four thousand"],
-            [" bốn trăm chín mươi mốt nghìn", "491.000 Four hundred ninety-one thousand"],
-            [" chín trăm năm mươi tư nghìn", "954.000 Nine hundred fifty-four thousand"],
-            [" bốn trăm mười chín nghìn", "419.000 Four hundred nineteen thousand"],
-            [" bốn trăm linh một nghìn", "401.000 Four hundred one thousand"],
-            [" bốn trăm nghìn", "400.000 Four hundred thousand"],
-            [" sáu trăm mười bốn nghìn", "614.000 Six hundred fourteen thousand"],
-            
-            // Existing High Numbers & Currency (used as reference)
-            [" một nghìn", "1.000 One thousand"],
-            ["mười nghìn", "10.000  Ten thousand"],
-            [" một trăm nghìn", "100.000 One hundred thousand"],
-            [" một trăm năm mươi nghìn", "150.000 One hundred fifty thousand"],
-            [" một triệu", "1.000.000 One million"],
-            ["năm triệu", "5.000.000  Five million"],
-            [" một triệu hai trăm nghìn", "1.200.000 One million two hundred thousand"],
-            // Core numbers
-            ["một", "One"],
-            ["mười", "Ten"],
-            ["một trăm", "One hundred"],
-        ];
+        // --- TAB SWITCHING LOGIC ---
+        function switchTab(tabId) {
+            // Hide all dialogue containers
+            document.querySelectorAll('.dialogue-container').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            // Remove active style from buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-100', 'text-blue-700', 'active-tab');
+                btn.classList.add('bg-gray-100', 'text-gray-600');
+            });
 
-        // --- NEW CONVERSATION DATA ---
+            // Show selected container
+            document.getElementById(tabId).classList.remove('hidden');
 
-        const conversationLesson1_Taxi = [
-            // Dialogue from PDF 1 (Transport and Greetings)
-            { speaker: "Bạn", vn: "**Xin chào!**", en: "Hello!"},
-            { speaker: "Tài xế", vn: "**Xin chào!** Anh đặt xe đến **chợ Bến Thành** **đúng không**?", en: "Hello! Did you book a ride to **Ben Thanh Market** **right**?" },
-            { speaker: "Bạn", vn: "**Đúng rồi! Cảm ơn!**", en: "**That's right! Thank you!**" },
-            { speaker: "Tài xế", vn: "**Không có gì!** Xin mời!", en: "**You're welcome!** Please come in!" },
-        ];
+            // Add active style to selected button
+            const activeBtn = document.querySelector(`button[data-tab="${tabId}"]`);
+            activeBtn.classList.remove('bg-gray-100', 'text-gray-600');
+            activeBtn.classList.add('bg-blue-100', 'text-blue-700', 'active-tab');
+        }
 
-        const conversationLesson2_Food = [
-            // Dialogue from PDF 2 (Food Ordering and Payment)
-            { speaker: "Người bán", vn: "**Xin chào.** Anh muốn **ăn** gì ạ?", en: "Hello. What would you want to **eat**?"},
-            { speaker: "Bạn", vn: "**Cho tôi 2 phở.**", en: "I'd like two bowls of **pho**." },
-            { speaker: "Người bán", vn: "Anh chị muốn **uống** gì ?", en: "What do you want to **drink**?" },
-            { speaker: "Bạn", vn: "Cho tôi 1 **trà đá** và 1 **nước suối**.", en: "1 **iced tea** and 1 **bottled water**, please." },
-            { speaker: "Người bán", vn: "**Dạ. Anh chị đợi chút.**", en: "**Sure. Please wait a moment.**" },
-            { speaker: "Bạn", vn: "Tổng cộng **586.000** VND. **Làm ơn tính tiền**.", en: "Total **586.000** VND. **Can I have the bill, please**." },
-            { speaker: "Người bán", vn: "**Cảm ơn!**", en: "**Thanks!**" },
-        ];
+        // --- BLUR REVEAL LOGIC ---
+        document.querySelectorAll('.hidden-text').forEach(el => {
+            el.addEventListener('click', function() {
+                this.classList.toggle('revealed');
+            });
+        });
 
-        const conversationLesson3_Utility = [
-            // Dialogue from PDF 2 (Asking for a toilet/menu/direction)
-            { speaker: "Bạn", vn: "**Xin lỗi**. **Có toilet không?**", en: "**Excuse me**. **Is there a toilet**?"},
-            { speaker: "Người bán", vn: "**Có**. **Hướng này**.", en: "**Yes**. **This way**." },
-            { speaker: "Bạn", vn: "**Cảm ơn**.", en: "**Thank you**."},
-            { speaker: "Người bán", vn: "**Không có gì**.", en: "**You're welcome**." },
-        ];
-
-
-        // --- Helper Function to Render Items (Unchanged - keeps your hiding logic) ---
-
-        function createItemElement(vnWord, enTranslation, index, isConversation = false, speaker = null) {
-            const container = document.createElement('div');
-            container.className = isConversation ? 'flex flex-col sm:flex-row sm:items-center p-3 rounded-lg border border-gray-100' : 'flex flex-wrap items-center justify-between p-2 hover:bg-blue-50 rounded-lg transition';
-
-            const vnTextElement = document.createElement('span');
-            // Adjusting max-width for better mobile wrap
-            vnTextElement.className = isConversation ? 'text-lg font-medium pr-4 max-w-full sm:max-w-[60%]' : 'text-lg font-semibold text-gray-700';
-            
-            let displayVn = vnWord;
-            if (speaker) {
-                // For conversation, show speaker
-                displayVn = `<span class="font-bold text-blue-600">${speaker}:</span> ${vnWord}`;
-            }
-
-            // Using innerHTML here for conversation speaker formatting only, content is controlled.
-            vnTextElement.innerHTML = displayVn; 
-
-            const translationElement = document.createElement('span');
-            translationElement.className = 'translation text-base text-gray-500';
-            translationElement.textContent = enTranslation;
-            translationElement.id = `translation-${index}`;
-            translationElement.style.display = 'none';
-
-            const button = document.createElement('button');
-            button.className = 'show-btn px-3 py-1 bg-blue-500 text-white text-sm font-medium rounded-full hover:bg-blue-600 transition duration-150 ease-in-out whitespace-nowrap';
-            button.textContent = 'Show Translation';
-            
-            button.onclick = function() {
-                // Get the translation element by ID
-                const target = document.getElementById(`translation-${index}`);
-                if (target.style.display === 'none' || target.style.display === '') {
-                    target.style.display = 'inline';
-                    this.textContent = 'Hide Translation';
-                } else {
-                    target.style.display = 'none';
-                    this.textContent = 'Show Translation';
-                }
-            };
-
-            if (isConversation) {
-                container.classList.add(speaker === 'Bạn' ? 'bg-indigo-50' : 'bg-gray-100');
-                
-                // Text wrapper containing VN text and hidden EN text
-                const textWrapper = document.createElement('div');
-                textWrapper.className = 'flex-1 flex flex-wrap items-center mb-2 sm:mb-0';
-                textWrapper.appendChild(vnTextElement);
-                textWrapper.appendChild(translationElement);
-
-                // Control group for the button, aligning to the right on desktop
-                const buttonContainer = document.createElement('div');
-                buttonContainer.className = 'w-full sm:w-auto sm:ml-4';
-                buttonContainer.appendChild(button);
-
-                container.appendChild(textWrapper);
-                container.appendChild(buttonContainer);
-                
-            } else {
-                container.appendChild(vnTextElement);
-
-                const controlGroup = document.createElement('div');
-                controlGroup.className = 'flex items-center space-x-3 mt-2 sm:mt-0';
-                controlGroup.appendChild(button);
-                controlGroup.appendChild(translationElement);
-                
-                container.appendChild(controlGroup);
-            }
-
-            return container;
-        }
-
-
-        // --- Rendering Logic ---
-
-        function renderData() {
-            const vocabList = document.getElementById('vocabulary-list');
-            const numbersList = document.getElementById('numbers-list');
-            
-            // Conversation containers (Updated IDs)
-            const travelList = document.getElementById('conversation-lesson-1-travel');
-            const foodList = document.getElementById('conversation-lesson-2-food');
-            const utilityList = document.getElementById('conversation-lesson-3-utility');
-            
-            // Clear existing lists before rendering new data
-            vocabList.innerHTML = '';
-            numbersList.innerHTML = '';
-            travelList.innerHTML = '';
-            foodList.innerHTML = '';
-            utilityList.innerHTML = '';
-
-
-            // 1. Render Vocabulary
-            vocabularyData.forEach(([vn, en], index) => {
-                vocabList.appendChild(createItemElement(vn, en, `vocab-${index}`));
-            });
-
-            // 2. Render Numbers
-            numbersData.forEach(([vn, en], index) => {
-                const numberItem = document.createElement('div');
-                numberItem.className = 'flex flex-col space-y-1 p-2 rounded-lg hover:bg-yellow-50 border border-yellow-100';
-                
-                const vnSpan = document.createElement('span');
-                vnSpan.className = 'text-base font-bold text-yellow-700';
-                vnSpan.textContent = vn;
-                numberItem.appendChild(vnSpan);
-
-                const enSpan = document.createElement('span');
-                enSpan.className = 'translation text-sm text-gray-600';
-                enSpan.textContent = en;
-                enSpan.id = `number-trans-${index}`;
-                numberItem.appendChild(enSpan);
-
-                const button = document.createElement('button');
-                button.className = 'show-btn mt-1 w-full text-center px-2 py-1 bg-yellow-500 text-white text-xs font-medium rounded-full hover:bg-yellow-600 transition duration-150 ease-in-out';
-                button.textContent = 'Show Translation';
-                
-                button.onclick = function() {
-                    const target = document.getElementById(`number-trans-${index}`);
-                    if (target.style.display === 'none' || target.style.display === '') {
-                        target.style.display = 'inline';
-                        this.textContent = 'Hide Translation';
-                    } else {
-                        target.style.display = 'none';
-                        this.textContent = 'Show Translation';
-                    }
-                };
-
-                numberItem.appendChild(button);
-                numbersList.appendChild(numberItem);
-            });
-
-            // 3. Render Conversations in separate blocks
-            conversationLesson1_Taxi.forEach((line, index) => {
-                travelList.appendChild(createItemElement(line.vn, line.en, `conv-L1-${index}`, true, line.speaker));
-            });
-            conversationLesson2_Food.forEach((line, index) => {
-                foodList.appendChild(createItemElement(line.vn, line.en, `conv-L2-${index}`, true, line.speaker));
-            });
-            conversationLesson3_Utility.forEach((line, index) => {
-                utilityList.appendChild(createItemElement(line.vn, line.en, `conv-L3-${index}`, true, line.speaker));
-            });
-        }
-
-        // Run the rendering when the window loads
-        window.onload = renderData;
-
-    </script>
+    </script>
 </body>
 </html>
